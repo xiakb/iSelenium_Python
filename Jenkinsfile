@@ -26,7 +26,7 @@ pipeline{
                     cd iSelenium_Python
 
                     #更新python依赖库
-                    pip3.9 install -r requirements.txt
+                    pip3 install -r requirements.txt
 
                     #运行自动化测试
                     pytest -sv test/web_ut.py
