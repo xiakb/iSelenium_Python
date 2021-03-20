@@ -20,23 +20,49 @@ class ISelenium(unittest.TestCase):
     def tearDown(self):
         self.driver.quit()
 
+    # def setUp(self):
+    #     config = self.get_config()
+    #
+    #     # 控制是否采用无界面形式运行自动化测试
+    #     try:
+    #         using_headless = os.environ["using_headless"]
+    #     except KeyError:
+    #         using_headless = None
+    #         print('没有配置环境变量 using_headless, 按照有界面方式运行自动化测试')
+    #
+    #     chrome_options = Options()
+    #     if using_headless is not None and using_headless.lower() == 'true':
+    #         print('使用无界面方式运行')
+    #         chrome_options.add_argument("--headless")
+    #
+    #     self.driver = webdriver.Chrome(executable_path=config.get('driver', 'chrome_driver'),
+    #                                    options=chrome_options)
+
     def setUp(self):
         config = self.get_config()
 
         # 控制是否采用无界面形式运行自动化测试
         try:
-            using_headless = os.environ["using_headless"]
+            browser = os.environ["browser"]
         except KeyError:
-            using_headless = None
-            print('没有配置环境变量 using_headless, 按照有界面方式运行自动化测试')
+            browser = None
+            print('没有配置环境变量 browser, 按照默认有界面方式运行自动化测试')
 
         chrome_options = Options()
-        if using_headless is not None and using_headless.lower() == 'true':
+        if browser is not None and browser.lower() == 'no_gui':
             print('使用无界面方式运行')
             chrome_options.add_argument("--headless")
-
-        self.driver = webdriver.Chrome(executable_path=config.get('driver', 'chrome_driver'),
-                                       options=chrome_options)
+            self.driver = webdriver.Chrome(executable_path=config.get('driver', 'chrome_driver'),
+                                           options=chrome_options)
+        elif browser is not None and browser.lower() == 'remote':
+            docker_remote = config.get('driver', 'remote')
+            print(f'使用远程方式运行, remote url:{docker_remote}')
+            self.driver = webdriver.Remote(command_executor=docker_remote,
+                                           desired_capabilities=DesiredCapabilities.CHROME)
+        else:
+            print('使用有界面Chrome浏览器运行')
+            self.driver = webdriver.Chrome(executable_path=config.get('driver', 'chrome_driver'),
+                                           options=chrome_options)
 
     @allure.story('Test key word 今日头条')
     def test_webui_1(self):
