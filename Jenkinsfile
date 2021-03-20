@@ -13,7 +13,7 @@ pipeline{
             steps {
                 sh 'mkdir -p iSelenium_Python'
                 dir("iSelenium_Python"){
-                    git branch:'docker', url:'git@github.com:princeqjzh/iSelenium_Python.git'
+                    git branch:'docker', url:'https://github.com/xiakb/iSelenium_Python.git'
                 }
             }
         }
